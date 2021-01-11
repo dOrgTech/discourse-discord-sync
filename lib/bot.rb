@@ -10,20 +10,20 @@ end
 
 class Bot
   def self.run_bot
-    $bot = Discordrb::Commands::CommandBot.new token: SiteSetting.discord_bot_token, prefix: SiteSetting.discord_bot_prefix
-    $bot.bucket :admin_tasks, limit: 3, time_span: 60, delay: 10
+    $discord = Discordrb::Commands::CommandBot.new token: SiteSetting.discord_bot_token, prefix: SiteSetting.discord_bot_prefix
+    $discord.bucket :admin_tasks, limit: 3, time_span: 60, delay: 10
     
-    $bot.include! NewMember
+    $discord.include! NewMember
 
-    $bot.ready do |event|
-      puts "Logged in as #{$bot.profile.username} (ID:#{$bot.profile.id}) | #{$bot.servers.size} servers"
-      $bot.send_message(SiteSetting.discord_bot_admin_channel_id, "Discourse/Discord Bot started!")
+    $discord.ready do |event|
+      puts "Logged in as #{$discord.profile.username} (ID:#{$discord.profile.id}) | #{$discord.servers.size} servers"
+      $discord.send_message(SiteSetting.discord_bot_admin_channel_id, "Discourse/Discord Bot Sync started!")
     end
 
-    $bot.command(:ping) do |event|
+    $discord.command(:ping) do |event|
       event.respond 'Pong!'
     end
 
-    $bot.run
+    $discord.run
   end
 end

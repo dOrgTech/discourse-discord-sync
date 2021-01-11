@@ -33,22 +33,26 @@ class Util
         groups << t.name
       end
       
-      $bot.servers do |server|
+      $discord.servers do |server|
         member = server.member(discord_id)
+        if member then
 
-        member.roles do |role| then
-          if !groups.include? role then
-            member.remove_role(role)
+          member.roles do |role| then
+            if !groups.include? role then
+              $discord.send_message(SiteSetting.discord_bot_admin_channel_id, "@#{user.username} removed role #{role}")
+              member.remove_role(role)
+            end
           end
-        end
 
-        groups do |group|
-          if !member.role(group) then
-            member.add_role(group)
+          groups do |group|
+            if !member.role(group) then
+              $discord.send_message(SiteSetting.discord_bot_admin_channel_id, "@#{user.username} granted role #{group}")
+              member.add_role(group)
+            end
           end
+
         end
       end
-
     end
   end
 end

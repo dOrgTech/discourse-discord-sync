@@ -1,19 +1,13 @@
 plugins:
-  discord_bot_enabled:
+  discord_sync_enabled:
     default: true
     client: false
-  discord_bot_token:
+  discord_sync_token:
     default: ''
     client: false
-  discord_bot_prefix:
+  discord_sync_prefix:
     default: '!'
     client: false
-  discord_bot_admin_channel_id:
+  discord_sync_admin_channel_id:
     default: ''
-    client: false
-  discord_bot_admin_role_id:
-    default: ''
-    client: false
-  discord_bot_rate_limit_delay:
-    default: 2
     client: false
