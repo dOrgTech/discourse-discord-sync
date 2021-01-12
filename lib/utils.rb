@@ -28,8 +28,20 @@ class Util
     end
   end
 
+  def self.find_role(role_name)
+    discord_role = nil
+    Instance::bot.servers.each do |key, server|
+      server.roles.each do |role|
+        if role.name == role_name then
+          discord_role = role
+        end
+      end
+    end
+    discord_role
+  end
+
   def self.sync_user(user)
-    discord_id = 0
+    discord_id = nil
 
     # Fetch the Discord ID from database
     builder = DB.build("select uaa.provider_uid from user_associated_accounts uaa /*where*/ limit 1")
@@ -39,7 +51,7 @@ class Util
       discord_id = t.provider_uid
     end
 
-    if discord_id > 0 then
+    unless discord_id.nil? then
       groups = []
 
       # Get user groups from database
@@ -54,18 +66,19 @@ class Util
       # For each server, just keep things synced
       Instance::bot.servers.each do |key, server|
         member = server.member(discord_id)
-        if member then
+        unless member.nil? then
 
           # Make nickname the same as Discourse username
-          if member.nick != user.username && SiteSetting.discourse_sync_username then
-            Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "Update @#{user.username}")
+          if member.nick != user.username && SiteSetting.discord_sync_username then
+            Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "Updated nickname @#{user.username}")
             member.set_nick(user.username)
           end
 
-          unless SiteSetting.discord_sync_verified_role == "" then
-            unless member.role?(SiteSetting.discord_sync_verified_role) then
-              Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "@#{user.username} granted role #{SiteSetting.discord_sync_verified_role}")
-              member.add_role(SiteSetting.discord_sync_verified_role)
+          if SiteSetting.discord_sync_verified_role != "" then
+            role = self.find_role(SiteSetting.discord_sync_verified_role)
+            unless role.nil? || (member.role? role) then
+              Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "@#{user.username} granted role #{role.name}")
+              member.add_role(role)
             end
           end
 
@@ -77,9 +90,10 @@ class Util
           end
 
           groups.each do |group|
-            unless member.role?(group) then
-              Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "@#{user.username} granted role #{group}")
-              member.add_role(group)
+            role = self.find_role(group)
+            unless role.nil? || (member.role? role) then
+              Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "@#{user.username} granted role #{role.name}")
+              member.add_role(role)
             end
           end
 

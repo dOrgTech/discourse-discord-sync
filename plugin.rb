@@ -36,27 +36,26 @@ after_initialize do
     end
   end
 
-  # Add event hook to username update
+  # Sync user on update (usually username)
   User.class_eval do
     after_save do |user|
       if user.id > 0 then Util.sync_user(user) end
     end
   end
 
-  # Sync users on badge grnat
+  # Sync user on group join
   DiscourseEvent.on(:user_added_to_group) do |user, group, automatic|
-    Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "Group change detected")
     if user.id > 0 then Util.sync_user(user) end
   end
 
-  # Sync users on badge grnat
+  # Sync user on group removal
   DiscourseEvent.on(:user_removed_from_group) do |user, group|
     if user.id > 0 then Util.sync_user(user) end
   end
 
-  # Sync users on create and update
-  DiscourseEvent.on(:username_updated) do |user|
-    if user.id > 0 then Util.sync_user(user) end
+  # Sync user after authenticating with Discord
+  DiscourseEvent.on(:after_auth) do |authenticator, auth_result|
+    if authenticator.name == "discord" && auth_result.user.id > 0 then Util.sync_user(auth_result.user) end
   end
 
   STDERR.puts '--------------------------------------------------'

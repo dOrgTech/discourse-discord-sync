@@ -26,8 +26,6 @@ class Bot
     bot = Instance::init
 
     unless bot.nil?
-      bot.bucket :admin_tasks, limit: 3, time_span: 60, delay: 10
-      
       bot.include! NewMember
 
       bot.ready do |event|

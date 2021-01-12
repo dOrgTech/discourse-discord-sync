@@ -18,6 +18,6 @@ plugins:
     default: ''
     client: false
   discord_sync_safe_roles:
-    default: 'Admin|Moderator'
+    default: 'Admins|Moderators'
     type: list
     list_type: compact
