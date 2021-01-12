@@ -1,6 +1,6 @@
 # name: Discord Sync
 # about: Sync a Discord server with a Discourse community
-# version: 0.1
+# version: 1.0
 # authors: Diego Barreiro
 # url: https://github.com/barreeeiroo/discourse-discord-sync
 
