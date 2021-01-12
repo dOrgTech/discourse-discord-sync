@@ -96,6 +96,7 @@ class Util
             end
           end
 
+          # Add all roles which the user is part of a group
           groups.each do |group|
             role = self.find_role(group)
             unless role.nil? || (member.role? role) then
