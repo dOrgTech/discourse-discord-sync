@@ -7,7 +7,7 @@ users to login with Discord, but you wish to keep linking account, check
 [the solution to this topic](https://meta.discourse.org/t/partially-enable-login-option/175330/4?u=barreeeiroo).
 
 This bot will sync all public Discourse groups with Discord roles. It will automatically trigger an update when an user
-links their Discord account, user groups are changed or profile gets updated
+links their Discord account, user groups are changed or profile gets updated.
 
 ## Installation Instructions
 
