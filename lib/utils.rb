@@ -1,5 +1,8 @@
+# Class that will run all sync jobs
 class Util
+  # Method triggered from Discord
   def self.sync_from_discord(discord_id)
+    # Search for users with the given Discord UD
     builder = DB.build("select u.* from user_associated_accounts uaa, users u /*where*/ limit 1")
     builder.where("provider_name = :provider_name", provider_name: "discord")
     builder.where("uaa.user_id = u.id")
@@ -20,7 +23,7 @@ class Util
 
     else
 
-      # Process and sync the user
+      # Process and sync the user using the standard Discourse method
       result.each do |t|
         self.sync_user(t)
       end
@@ -28,6 +31,7 @@ class Util
     end
   end
 
+  # Search for a role in the server with a given name
   def self.find_role(role_name)
     discord_role = nil
     Instance::bot.servers.each do |key, server|
@@ -40,6 +44,7 @@ class Util
     discord_role
   end
 
+  # Sync users from Discourse to Discord
   def self.sync_user(user)
     discord_id = nil
 
@@ -74,6 +79,7 @@ class Util
             member.set_nick(user.username)
           end
 
+          # If there is a verified role set, grant the user with that role
           if SiteSetting.discord_sync_verified_role != "" then
             role = self.find_role(SiteSetting.discord_sync_verified_role)
             unless role.nil? || (member.role? role) then
@@ -82,8 +88,9 @@ class Util
             end
           end
 
+          # Remove all roles which are not safe, not the verified role or the user is not part of a group with that name
           member.roles.each do |role|
-            unless (groups.include? role.name) || (SiteSetting.discord_sync_safe_roles.include? role.name) then
+            unless (groups.include? role.name) || (SiteSetting.discord_sync_safe_roles.include? role.name) || role.name == SiteSetting.discord_sync_verified_role then
               Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "@#{user.username} removed role #{role.name}")
               member.remove_role(role)
             end
