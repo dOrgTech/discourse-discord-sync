@@ -98,6 +98,7 @@ class Util
 
           # Add all roles which the user is part of a group
           groups.each do |group|
+            Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "@#{group} Logging Testing")
             role = self.find_role(group)
             unless role.nil? || (member.role? role) then
               Instance::bot.send_message(SiteSetting.discord_sync_admin_channel_id, "@#{user.username} granted role #{role.name}")
